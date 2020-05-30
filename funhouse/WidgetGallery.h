@@ -27,6 +27,9 @@ class WidgetGallery : public QWidget {
 public:
   WidgetGallery(QWidget* parent = nullptr);
 
+protected:
+  void showEvent(QShowEvent *event) override;
+
 private slots:
   void changeStyle(const QString& styleName);
   void changePalette();

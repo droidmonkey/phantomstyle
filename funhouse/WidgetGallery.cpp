@@ -53,9 +53,73 @@
 #include <QCommonStyle>
 #include <QToolButton>
 #include <QtWidgets>
+#include <QPalette>
+#include <QString>
+
+QPalette global_palette;
 
 //! [0]
 WidgetGallery::WidgetGallery(QWidget* parent) : QWidget(parent) {
+  global_palette.setColor(QPalette::Active, QPalette::Window, QStringLiteral("#3B3B3D"));
+  global_palette.setColor(QPalette::Inactive, QPalette::Window, QStringLiteral("#404042"));
+  global_palette.setColor(QPalette::Disabled, QPalette::Window, QStringLiteral("#424242"));
+
+  global_palette.setColor(QPalette::Active, QPalette::WindowText, QStringLiteral("#CACBCE"));
+  global_palette.setColor(QPalette::Inactive, QPalette::WindowText, QStringLiteral("#C8C8C6"));
+  global_palette.setColor(QPalette::Disabled, QPalette::WindowText, QStringLiteral("#707070"));
+
+  global_palette.setColor(QPalette::Active, QPalette::Text, QStringLiteral("#CACBCE"));
+  global_palette.setColor(QPalette::Inactive, QPalette::Text, QStringLiteral("#C8C8C6"));
+  global_palette.setColor(QPalette::Disabled, QPalette::Text, QStringLiteral("#707070"));
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+  global_palette.setColor(QPalette::Active, QPalette::PlaceholderText, QStringLiteral("#7D7D82"));
+  global_palette.setColor(QPalette::Inactive, QPalette::PlaceholderText, QStringLiteral("#87888C"));
+  global_palette.setColor(QPalette::Disabled, QPalette::PlaceholderText, QStringLiteral("#737373"));
+#endif
+
+  global_palette.setColor(QPalette::Active, QPalette::BrightText, QStringLiteral("#252627"));
+  global_palette.setColor(QPalette::Inactive, QPalette::BrightText, QStringLiteral("#2D2D2F"));
+  global_palette.setColor(QPalette::Disabled, QPalette::BrightText, QStringLiteral("#333333"));
+
+  global_palette.setColor(QPalette::Active, QPalette::Base, QStringLiteral("#27272A"));
+  global_palette.setColor(QPalette::Inactive, QPalette::Base, QStringLiteral("#2A2A2D"));
+  global_palette.setColor(QPalette::Disabled, QPalette::Base, QStringLiteral("#343437"));
+
+  global_palette.setColor(QPalette::Active, QPalette::AlternateBase, QStringLiteral("#2C2C30"));
+  global_palette.setColor(QPalette::Inactive, QPalette::AlternateBase, QStringLiteral("#2B2B2F"));
+  global_palette.setColor(QPalette::Disabled, QPalette::AlternateBase, QStringLiteral("#36363A"));
+
+  global_palette.setColor(QPalette::All, QPalette::ToolTipBase, QStringLiteral("#2D532D"));
+  global_palette.setColor(QPalette::All, QPalette::ToolTipText, QStringLiteral("#BFBFBF"));
+
+  global_palette.setColor(QPalette::Active, QPalette::Button, QStringLiteral("#28282B"));
+  global_palette.setColor(QPalette::Inactive, QPalette::Button, QStringLiteral("#28282B"));
+  global_palette.setColor(QPalette::Disabled, QPalette::Button, QStringLiteral("#2B2A2A"));
+
+  global_palette.setColor(QPalette::Active, QPalette::ButtonText, QStringLiteral("#B9B9BE"));
+  global_palette.setColor(QPalette::Inactive, QPalette::ButtonText, QStringLiteral("#9E9FA5"));
+  global_palette.setColor(QPalette::Disabled, QPalette::ButtonText, QStringLiteral("#73747E"));
+
+  global_palette.setColor(QPalette::Active, QPalette::Highlight, QStringLiteral("#2D532D"));
+  global_palette.setColor(QPalette::Inactive, QPalette::Highlight, QStringLiteral("#354637"));
+  global_palette.setColor(QPalette::Disabled, QPalette::Highlight, QStringLiteral("#293D29"));
+
+  global_palette.setColor(QPalette::Active, QPalette::HighlightedText, QStringLiteral("#CCCCCC"));
+  global_palette.setColor(QPalette::Inactive, QPalette::HighlightedText, QStringLiteral("#CECECE"));
+  global_palette.setColor(QPalette::Disabled, QPalette::HighlightedText, QStringLiteral("#707070"));
+
+  global_palette.setColor(QPalette::All, QPalette::Light, QStringLiteral("#414145"));
+  global_palette.setColor(QPalette::All, QPalette::Midlight, QStringLiteral("#39393C"));
+  global_palette.setColor(QPalette::All, QPalette::Mid, QStringLiteral("#2F2F32"));
+  global_palette.setColor(QPalette::All, QPalette::Dark, QStringLiteral("#202022"));
+  global_palette.setColor(QPalette::All, QPalette::Shadow, QStringLiteral("#19191A"));
+
+  global_palette.setColor(QPalette::All, QPalette::Link, QStringLiteral("#68B668"));
+  global_palette.setColor(QPalette::Disabled, QPalette::Link, QStringLiteral("#74A474"));
+  global_palette.setColor(QPalette::All, QPalette::LinkVisited, QStringLiteral("#75B875"));
+  global_palette.setColor(QPalette::Disabled, QPalette::LinkVisited, QStringLiteral("#77A677"));
+
   originalPalette = QApplication::palette();
 
   styleComboBox = new QComboBox;
@@ -129,6 +193,7 @@ void WidgetGallery::changeStyle(const QString& styleName)
 {
   if (styleName == "Phantom") {
     QApplication::setStyle(new PhantomStyle);
+    QApplication::setPalette(QApplication::palette());
   } else if (styleName == "Common") {
     QApplication::setStyle(new QCommonStyle);
   } else {
@@ -142,12 +207,22 @@ void WidgetGallery::changeStyle(const QString& styleName)
 void WidgetGallery::changePalette()
 //! [7] //! [8]
 {
-  if (useStylePaletteCheckBox->isChecked())
-    QApplication::setPalette(QApplication::style()->standardPalette());
-  else
-    QApplication::setPalette(originalPalette);
+  // if (useStylePaletteCheckBox->isChecked())
+  //   QApplication::setPalette(QApplication::style()->standardPalette());
+  // else
+  //  QApplication::setPalette(global_palette);
 }
 //! [8]
+
+void WidgetGallery::showEvent(QShowEvent *event)
+{
+  static bool shown = false;
+  if (!shown) {
+  //  QApplication::setPalette(QApplication::palette());
+    shown = true;
+  }
+  QWidget::showEvent(event);
+}
 
 //! [9]
 void WidgetGallery::advanceProgressBar()
